@@ -1,5 +1,4 @@
 import subprocess
-import random as rd
 
 # Reception of the text with the modems
 
@@ -8,7 +7,7 @@ PORT = "9200"
 
 name_receive_file = '/dev_ws/src/file_receive.txt'
 
-subprocess.run("nc %s %s >> %s" % (HOST,PORT,name_receive_file),shell=True)
+subprocess.run("nc -N %s %s >> %s" % (HOST,PORT,name_receive_file),shell=True)
 
 
 # Send file with ssh
@@ -26,3 +25,8 @@ file = "dev_ws/src/file1.txt"
 command = 'echo %s | cat >> %s' % (txt,file)
 
 subprocess.run("sshpass -p %s ssh %s@%s '%s'" % (pw,user,host,command), shell=True)
+
+# Send confirmation for the sent
+
+subprocess.run("echo 'AT*SENDIM,2,1,noack,OK' | nc -N %s %s" % (HOST,PORT),shell=True)
+

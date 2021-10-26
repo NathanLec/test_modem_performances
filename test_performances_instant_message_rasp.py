@@ -9,56 +9,48 @@ def random_message(leng):
     for k in range(leng):
         lettre = rd.randint(65,90)
         txt = txt + chr(lettre)
-    tac = time.time()       
+    tac = time.time()
     print("message : ",tac-tic)
     return txt
 
 def send_message(leng):
     ## Variables
-    
-    name_receive_file = '/dev_ws/src/file_receive.txt'
-    
-    
+
+    name_receive_file = 'file1.txt'
+
+
     ## Creation of the random text
-    
+
     txt = random_message(leng)
-    
+
     print(txt)
-    ## Send file with ssh
-    
-    user = 'ubuntu'
-    host = '192.168.78.253'
-    pw = 'nathan1003'
-    
-    file = "dev_ws/src/file1.txt"
-    
-    command = 'echo %s | cat >> %s' % (txt,file)
-    
-    subprocess.run(command, shell=True)
-    
+
     ## Send file with modems
-    
+
     HOST = "192.168.0.198"
     PORT = "9200"
-    
+
     txtlen = str(len(txt))
-    subprocess.run("echo 'AT*SENDIM,%s,1,noack,%s' | nc -N %s %s" % (txtlen,txt,HOST,PORT),shell=True)
-    
-    
+    subprocess.run("echo 'AT*SENDIM,%s,255,noack,%s' | nc -N %s %s" % (txtlen,txt,HOST,PORT),shell=True)
+
+
     ## Wait for the acknoledge
-    
-    subprocess.run("nc -N %s %s" % (HOST,PORT),shell=True)
-    
-    ## Comparison of the two text
-    
+
+    WAIT = True
+
         ## Importation of the texts
-        
-    receive = open("%s"%(name_receive_file),"r+")
-    text_receive = receive.read()
-    
+    while WAIT:
+        receive = open("%s"%(name_receive_file),"r+")
+        text_receive = receive.read()
+        if len(text_receive)!=0 :
+            WAIT = False
+            receive.close()
+            subprocess.run("cat '' > %s" %(name_receive_file),shell=True)
     RESULT = comparison(txt, text_receive)
-    
+    print(txt)
+    print(text_receive)
     return RESULT
+
 
 
     ## Code of comparison

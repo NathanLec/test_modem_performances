@@ -27,18 +27,18 @@ def send_message(leng):
     ## Send file with ssh
     
     user = 'ubuntu'
-    host = '192.168.7.253'
+    host = '192.168.78.253'
     pw = 'nathan1003'
     
     file = "dev_ws/src/file1.txt"
     
     command = 'echo %s | cat >> %s' % (txt,file)
     
-    subprocess.run("sshpass -p %s ssh %s@%s '%s'" % (pw,user,host,command), shell=True)
+    subprocess.run(command, shell=True)
     
     ## Send file with modems
     
-    HOST = "192.168.0.190"
+    HOST = "192.168.0.198"
     PORT = "9200"
     
     txtlen = str(len(txt))

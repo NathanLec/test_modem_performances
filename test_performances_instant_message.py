@@ -2,7 +2,7 @@ import subprocess
 
 # Reception of the text with the modems
 
-HOST = "192.168.0.190"
+HOST = "192.168.0.18"
 PORT = "9200"
 
 name_receive_file = '/dev_ws/src/file_receive.txt'
@@ -17,7 +17,7 @@ txt = command.read()
 command.close()
 
 user = 'ubuntu'
-host = '192.168.7.253'
+host = '192.168.78.253'
 pw = 'nathan1003'
 
 file = "dev_ws/src/file1.txt"

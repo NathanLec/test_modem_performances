@@ -33,14 +33,9 @@ def send_message(leng):                     # Send the message of a determined l
 
     HOST = "192.168.0.198"                  # IP address of the modem
     PORT = "9200"
-    
-    for k in range(leng//64+1):
-        fin = leng - 64*k
-        t = txt[64*k:min(64*(k+1),fin)]
-        long = len(t)
-        subprocess.run("echo 'AT*SENDIM,%s,255,noack,%s' | nc -W 1 %s %s" % (long,t,HOST,PORT),shell=True)    # Send the message as a Burst message through the modems and wait for a 1 ligne answer ( -W 1 ) which be the OK answer
 
-    subprocess.run("echo 'AT*SENDIM,6,255,noack,FIN000' | nc -W 1 %s %s" % (HOST,PORT),shell=True)
+    subprocess.run("echo '%s' | nc -W 1 %s %s" % (txt,HOST,PORT),shell=True)    # Send the message as a Burst message through the modems and wait for a 1 ligne answer ( -W 1 ) which be the OK answer
+
 
     ## Wait for the acknoledge
 

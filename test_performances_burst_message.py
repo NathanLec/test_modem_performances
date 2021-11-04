@@ -33,12 +33,15 @@ while True:
     # Receive loop
     try:                                                                                                # Allow to get out of the loop whenever the user wants with the ^C command
         while not(GO):
-            a = str(subprocess.check_output("cat %s" %(name_receive_file),shell=True)).split(",")[-1]                 # Read the current text in the received file
-            if len(a) != 0:
-                if a[-6:-1]=="FIN000":
-                    GO = True
+            a = str(subprocess.check_output("cat %s" %(name_receive_file),shell=True))                  # Read the current text in the received file
+            if len(a) == LEN                                                                            # Compare the length of the current text with the old one and if you have to write a message
+                if pr == 1:                                                                             # As the consequence, if the length is the same and if you never wrote, the algorith told you to stop
+                    print("^C to stop")                                                                 # Because, front its point of vue, it didn't receive a message the last second, so it's finish
+                    pr = 0                                                                              # IF THE MODEMS STILL TRANSMIT, DO NOT STOP, it will make the futur receptions.
             else:
-                subprocess.run("nc -w 1 %s %s > %s" % (HOST,PORT,name_receive_file),shell=True)            # And you listen for one more second, trying to get more informations
+                LEN = len(a)                                                                            # If the length change, it's because the algorith receive additionnal data.
+                pr = 1                                                                                  # As the consequence it will have to write when it will be finish for it
+            subprocess.run("nc -w 1 %s %s >> %s" % (HOST,PORT,name_receive_file),shell=True)            # And you listen for one more second, trying to get more informations
     except KeyboardInterrupt:                                       # This is for capture the ^C command and get of the while loop
         GO = True
 #        print(a)                                                    # It can print the output of the text file, if you want to compare yourself
@@ -53,7 +56,7 @@ while True:
     txt = txt.replace("\n","")                                                                  # Change the text to make it similar to the send one (remove the caracters created by python and the subprocess library)
 
     user = 'ubuntu'                                                                             # IP address and password for the Raspberry Pi SSH connexion
-    host = '192.168.156.225'
+    host = '192.168.45.253'
     pw = 'nathan1003'
 
     file = "dev_ws/src/file1.txt"                                                               # Name of the file in the Raspberry Pi, take care to write the same in the Raspberry pi algorithm

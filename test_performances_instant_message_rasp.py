@@ -16,7 +16,7 @@ def random_message(leng):                   # Random message creation with the l
         lettre = rd.randint(65,90)          # Random capital letter with the ASCII code
         txt = txt + chr(lettre)
     tac = time.time()                       #Time of the creation of the message
-    print("message : ",tac-tic)
+    print(tac-tic)
     return txt
 
 def send_message(leng):                     # Send the message of a determined length and wait for the Computer acknoledge
@@ -33,15 +33,15 @@ def send_message(leng):                     # Send the message of a determined l
 
     HOST = "192.168.0.198"                  # IP address of the modem
     PORT = "9200"
-    
+    tTot = ''
     for k in range(leng//64+1):
         fin = leng - 64*k
-        t = txt[64*k:min(64*(k+1),fin)]
+        t = txt[64*k:min(64*(k+1),64*k+fin)]
         long = len(t)
         subprocess.run("echo 'AT*SENDIM,%s,255,noack,%s' | nc -W 1 %s %s" % (long,t,HOST,PORT),shell=True)    # Send the message as a Burst message through the modems and wait for a 1 ligne answer ( -W 1 ) which be the OK answer
-
-    subprocess.run("echo 'AT*SENDIM,6,255,noack,FIN000' | nc -W 1 %s %s" % (HOST,PORT),shell=True)
-
+        time.sleep(2)
+    subprocess.run("echo 'AT*SENDIM,6,255,noack,FIN000' | nc -W 2 %s %s" % (HOST,PORT),shell=True)
+    time.sleep(1)
     ## Wait for the acknoledge
 
     ## Importation of the texts
@@ -49,7 +49,7 @@ def send_message(leng):                     # Send the message of a determined l
     text_receive = receive.read()
     receive.close()
     subprocess.run("echo "" | cat > %s" %(name_receive_file),shell=True)        # Write over the file
-    RESULT = comparison(txt, text_receive)
+    RESULT = comparison(txt, text_receive[:-1])
     return RESULT
 
 
@@ -61,7 +61,7 @@ def comparison(text_send,text_receive):                     # Compare the 2 text
     gap = 0                                                 # If their is a removed caracter, and all the rest is identical, the gap will increase of 1 and their will be no diff
 
     long1 = len(text_send)
-    long2 = len(text_receive)-1
+    long2 = len(text_receive)
 
     long = long1
     text_l = text_send
@@ -79,7 +79,7 @@ def comparison(text_send,text_receive):                     # Compare the 2 text
     for k in range(long):                                   # In the range of the shorter message
         if k+gap < max(long1,long2):                        # Try if the gap is not out of range
             if text_s[k] != text_l[k+gap]:                  # If the two caracters are differents :
-                if k+gap+1 < max(long1,long2):                  # If the next caracter is in range, and 
+                if k+gap+1 < max(long1,long2):                  # If the next caracter is in range, and
                     if text_l[k+gap+1] == text_s[k]:                # If the next caracter is identical with the previous caracter,
                         gap += 1                                    # It should be a gap
                     else:
@@ -114,4 +114,5 @@ print("""
 
 
 """)
-print(RESULT)
+
+

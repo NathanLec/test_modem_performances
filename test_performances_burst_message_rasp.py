@@ -37,7 +37,7 @@ def send_message(leng):                     # Send the message of a determined l
     subprocess.run("echo '%s' | nc -W 1 %s %s" % (txt,HOST,PORT),shell=True)    # Send the message as a Burst message through the modems and wait for a 1 ligne answer ( -W 1 ) which be the OK answer
 
 
-    ## Wait for the acknoledge
+    ## Wait for the acknowledge
 
     ## Importation of the texts
     receive = open("%s"%(name_receive_file),"r+")                               # Read and write over the old receive file, and wait for the next text.
